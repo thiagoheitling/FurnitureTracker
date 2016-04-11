@@ -12,7 +12,7 @@
 
 @interface MasterViewController ()
 
-@property (nonatomic, strong) NSMutableArray *rooms;
+//@property (nonatomic, strong) NSMutableArray *rooms;
 
 @end
 
@@ -96,11 +96,20 @@
     return YES;
 }
 
+- (void)deleteItemAtIndexPath:(NSIndexPath *)indexPath {
+    // Delete the row from the data source
+    RLMResults <Room *> *rooms = [Room allObjects];
+    RLMRealm *realm = RLMRealm.defaultRealm;
+    [realm beginWriteTransaction];
+    [realm deleteObject:rooms[indexPath.row]];
+    [realm commitWriteTransaction];
+}
+
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
-        [self.rooms removeObjectAtIndex:indexPath.row];
+        [self deleteItemAtIndexPath:indexPath];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert)
